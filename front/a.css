@@ -1,0 +1,44 @@
+.form-container {
+    padding-top: 3%;
+    height: 600px;
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px 4px 0 0;
+}
+
+.my-form {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 6%;
+    padding-bottom: 12%;
+}
+
+.my-form div {
+    margin-bottom: 4%;
+}
+
+.my-form button {
+    width: 100%;
+}
+
+.my-footer {
+    padding-top: 3%;
+    padding-bottom: 3%;
+    margin-top: 3%;
+    color: #99979c;
+    text-align: center;
+    background-color: #2a2730;
+}
+
+.my-footer a {
+    color: #fff;
+}
+
+.my-footer li {
+    display: inline-block;
+}
+
+.my-footer li+li {
+    margin-left: 30px;
+}

@@ -27,3 +27,5 @@ hs_err_pid*
 .idea
 cloudDisk.iml
 web/
+out
+folder

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>网盘内容</title>
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="a.css" rel="stylesheet" />
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</head>
+
+<body background="resource/bg.jpg">
+    <div id="header"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h3>网盘内容</h3>
+        </div>
+    </div>
+    <div class="container form-container">
+        <table id="table-files" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>文件名称（点击名称下载）</th>
+                    <th>文件大小(Byte)</th>
+                    <th>更改时间</th>
+                </tr>
+            </thead>
+        </table>
+
+        <nav aria-label="...">
+            <ul class="pager" style="text-align: right;">
+                <li><a href="#">Previous</a></li>
+                <li><a href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        $(function () {
+            $("#header").load("header.html");
+            $("#footer").load("footer.html");
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/cloudDisk/list",
+                contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+                success: function (result) {
+                    for (var i in result) {
+                        $("#table-files").append('<tbody><tr><td><a href="/cloudDisk/download?name=' + result[i]['name'] + '">' + result[i]['name'] + '</a></td><td>' + result[i]['size'] + '</td><td>' + result[i]['time'] + '</td></tr></tbody>');
+                    }
+                },
+                error: function () {
+                    alert("异常！请稍后再试");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

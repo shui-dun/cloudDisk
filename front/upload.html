@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="a.css" rel="stylesheet" />
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</head>
+
+<body background="resource/bg.jpg">
+    <div id="header"></div>
+    <div class="container">
+        <div class="page-header">
+            <h3>上传文件</h3>
+        </div>
+
+        <div class="container">
+            <div class="jumbotron" style="margin-top: 5%;margin-bottom: 10%;margin-left: 10%;margin-right: 10%;">
+                <form enctype="multipart/form-data">
+                    <h1><input type="file" id="filebutton" style="width: 80%;" /></h1>
+                    <p>上传至cloudDisk</p>
+                    <p><a id="upload" class="btn btn-primary btn-lg" role="button">上传</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        $(function () {
+            $("#header").load("header.html");
+            $("#footer").load("footer.html");
+            $("#upload").click(function () {
+                var files = $('#filebutton').prop('files');
+                var reader = new FileReader();
+                reader.readAsDataURL(files[0]);
+                reader.onload = function (e) {
+                    var data = new FormData();
+                    data.append('name', files[0].name);
+                    data.append('content', reader.result);
+                    $.ajax({
+                        type: 'POST',
+                        url: "/cloudDisk/upload",
+                        data: data,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function (ret) {
+                            alert(ret);
+                        },
+                        error: function () {
+                            alert("异常！请稍后再试");
+                        }
+                    });
+                };
+            });
+        });
+    </script>
+</body>
+
+</html>
