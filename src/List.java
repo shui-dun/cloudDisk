@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @WebServlet("/list")
@@ -24,12 +25,13 @@ public class List extends HttpServlet {
                 resp.getWriter().write("[]");
                 return;
             }
+            SimpleDateFormat ft = new SimpleDateFormat("yy-MM-dd hh:mm");
             StringBuilder ans = new StringBuilder("[");
             for (File file : files) {
                 if (file.isFile()) {
                     ans.append("{\"name\":\"").append(file.getName()).append("\",");
                     ans.append("\"size\":\"").append(file.length()).append("\",");
-                    ans.append("\"time\":\"").append(new Date(file.lastModified()).toString()).append("\"},");
+                    ans.append("\"time\":\"").append(ft.format(new Date(file.lastModified()))).append("\"},");
                 }
             }
             ans.setCharAt(ans.length() - 1, ']');

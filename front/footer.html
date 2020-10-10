@@ -1,4 +1,4 @@
-<footer class="my-footer">
+<footer id="thefoot" class="my-footer">
     <div class="container">
         <ul>
             <li><a href="#">用户协议</a></li>
@@ -8,3 +8,12 @@
         </ul>
     </div>
 </footer>
+
+<script>
+    $(function () {
+        if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $("#thefoot").addClass("navbar-fixed-bottom");
+            $(".my-footer").css("text-align", "left");
+        }
+    });
+</script>
