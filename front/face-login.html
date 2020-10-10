@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>登录</title>
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="a.css" rel="stylesheet" />
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</head>
+
+<body background="resource/bg.jpg">
+    <div id="header"></div>
+    <div class="container">
+        <div class="page-header">
+            <h3>人脸登录</h3>
+        </div>
+
+        <form id="theform" class="my-form">
+            <div class="input-group input-group-lg">
+                <span class="input-group-addon">用户名</span>
+                <input type="text" name="name" class="form-control" placeholder="请输入您的用户名">
+            </div>
+            <a id="thumb" class="thumbnail">
+                <img id="theimg" data-src="holder.js/100%x180" alt="100%x180"
+                    style="height: 50%; width: 50%; display: block;margin-top: 5%;margin-bottom: 5%;"
+                    src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE0MCAxODAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MTgwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTc1MTBmNGY3NzUgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMHB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xNzUxMGY0Zjc3NSI+PHJlY3Qgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxODAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI0NC4wMzkwNjI1IiB5PSI5NC40MDE1NjI1Ij4xNDB4MTgwPC90ZXh0PjwvZz48L2c+PC9zdmc+"
+                    data-holder-rendered="true">
+            </a>
+            <button id="signup-button" type="button" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-star" aria-hidden="true"></span> 登录
+            </button>
+        </form>
+    </div>
+
+    <input id="input-img" type="file" accept='image/*' name="img" class="form-control" style="display: none;">
+    <div id="footer"></div>
+
+    <script>
+        var ready = false;
+        var reader = null;
+        $(function () {
+            $("#header").load("header.html");
+            $("#footer").load("footer.html");
+            $("#thumb").click(function () {
+                $("#input-img").click();
+            });
+            $("#input-img").change(function () {
+                ready = false;
+                var files = $('#input-img').prop('files');
+                reader = new FileReader();
+                reader.readAsDataURL(files[0]);
+                reader.onload = function (e) {
+                    ready = true;
+                    $("#theimg").attr("src", reader.result);
+                };
+            });
+            $("#signup-button").click(function () {
+                if (ready == true) {
+                    var data = new FormData();
+                    var array = $('#theform').serializeArray();
+                    $.each(array, function () {
+                        data.append(this.name, this.value);
+                    });
+                    data.append('content', reader.result);
+                    $.ajax({
+                        type: 'POST',
+                        url: "/cloudDisk/facelogin",
+                        data: data,
+                        dataType: "json",
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function (result) {
+                            if (result['status'] == 'success') {
+                                alert("登录成功！");
+                                window.location.href = '/cloudDisk/front/disk.html';
+                            } else {
+                                alert("登录失败，人脸验证失败或与用户名不匹配");
+                            }
+                        },
+                        error: function () {
+                            alert("未知的异常，请稍后重试。");
+                        }
+                    });
+                } else {
+                    alert("图片尚未加载完成，请耐心等待");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
