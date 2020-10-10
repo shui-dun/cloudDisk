@@ -20,6 +20,21 @@ public class Upload extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
+        java.util.List<FileItem> items = readForm(req, resp, 2);
+        if (items == null) {
+            return;
+        }
+        String base64 = items.get(1).getString();
+        try {
+            Files.write(Paths.get(List.path + items.get(0).getString()),
+                    Base64.getDecoder().decode(base64RmHead(base64)));
+            resp.getWriter().write("上传成功！");
+        } catch (IOException e) {
+            resp.getWriter().write("上传失败！");
+        }
+    }
+
+    public static java.util.List<FileItem> readForm(HttpServletRequest req, HttpServletResponse resp, int n) throws IOException {
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setHeaderEncoding("UTF-8");
@@ -28,18 +43,16 @@ public class Upload extends HttpServlet {
             items = upload.parseRequest(req);
         } catch (FileUploadException e) {
             resp.getWriter().write("无法解析的请求");
+            return null;
         }
-        if (items == null || items.size() != 2) {
+        if (items == null || items.size() != n) {
             resp.getWriter().write("请求的参数个数不对");
-            return;
+            return null;
         }
-        String base64 = items.get(1).getString();
-        try {
-            Files.write(Paths.get(List.path + items.get(0).getString()),
-                    Base64.getDecoder().decode(base64.substring(base64.indexOf(",") + 1)));
-            resp.getWriter().write("上传成功！");
-        } catch (IOException e) {
-            resp.getWriter().write("上传失败！");
-        }
+        return items;
+    }
+
+    public static String base64RmHead(String base64) {
+        return base64.substring(base64.indexOf(",") + 1);
     }
 }

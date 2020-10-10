@@ -18,15 +18,28 @@ public class Dao {
     }
 
     public static boolean exists(String s) {
-        boolean ans = false;
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(s)) {
-            ResultSet rs = pstmt.executeQuery();
+        return query(s) != null;
+    }
+
+    public static String query(String s) {
+        String ans = null;
+        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(s); ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
-                ans = true;
+                ans = rs.getString(1);
             }
         } catch (SQLException | NamingException e) {
             e.printStackTrace();
         }
         return ans;
+    }
+
+    public static boolean update(String s) {
+        int result = 0;
+        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(s)) {
+            result = pstmt.executeUpdate();
+        } catch (SQLException | NamingException e) {
+            e.printStackTrace();
+        }
+        return result > 0;
     }
 }

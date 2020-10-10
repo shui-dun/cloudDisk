@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        boolean success = Dao.exists("select * from user where name='" + req.getParameter("name") + "' and passwd='" + req.getParameter("passwd") + "';");
+        boolean success = Dao.exists("select name from user where name='" + req.getParameter("name") + "' and passwd='" + req.getParameter("passwd") + "';");
         if (!success) {
             resp.getWriter().write("{\"status\":\"fail\"}");
         } else {
