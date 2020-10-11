@@ -15,10 +15,10 @@
     <div id="header"></div>
 
     <div class="container">
+        <div class="page-header">
+            <h3>请登录</h3>
+        </div>
         <form id="login-form" class="my-form">
-            <div class="page-header">
-                <h3>请登录</h3>
-            </div>
             <div class="input-group input-group-lg">
                 <span class="input-group-addon">用户名</span>
                 <input type="text" name="name" class="form-control" placeholder="请输入您的用户名">
@@ -36,12 +36,12 @@
     <div id="footer"></div>
 
     <script>
+        if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $("#login-form").css("margin-top", "30%");
+        }
         $(function () {
             $("#header").load("header.html");
             $("#footer").load("footer.html");
-            if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-                $("#footer").css("margin-top", "100%");
-            }
         });
 
         $("#login-button").click(function () {

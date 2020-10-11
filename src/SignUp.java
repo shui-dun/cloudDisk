@@ -22,6 +22,10 @@ public class SignUp extends HttpServlet {
             resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
             return;
         }
+        if (items.get(0).getString().length() <= 1 || items.get(1).getString().length() <= 3) {
+            resp.getWriter().write(RespCode.resp(RespCode.WEAK_PASSWD));
+            return;
+        }
         boolean success = Dao.update("insert into user values('" + items.get(0).getString() + "','" + items.get(1).getString() + "','" + items.get(2).getString() + "');");
         if (!success) {
             resp.getWriter().write(RespCode.resp(RespCode.USER_NAME_ERROR));

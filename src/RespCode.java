@@ -15,6 +15,8 @@ public class RespCode {
 
     public static int IO_EXCEPTION = 7;
 
+    public static int WEAK_PASSWD = 8;
+
     public static String resp(int code) {
         return String.format("{\"error_code\":%d}", code);
     }

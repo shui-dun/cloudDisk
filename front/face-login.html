@@ -39,6 +39,9 @@
     <div id="footer"></div>
 
     <script>
+        if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $("#theform").css("margin-top", "30%");
+        }
         var reader = null;
         $(function () {
             $("#header").load("header.html");

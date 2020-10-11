@@ -21,11 +21,11 @@
         <form id="theform" class="my-form">
             <div class="input-group input-group-lg">
                 <span class="input-group-addon">用户名</span>
-                <input type="text" name="name" class="form-control" placeholder="请输入您的用户名">
+                <input type="text" name="name" class="form-control" placeholder="用户名长度至少为两个字符">
             </div>
             <div class="input-group input-group-lg">
                 <span class="input-group-addon">密码</span>
-                <input type="password" name="passwd" class="form-control" placeholder="请输入密码">
+                <input type="password" name="passwd" class="form-control" placeholder="密码长度至少为四个字符">
             </div>
             <a id="thumb" class="thumbnail">
                 <img id="theimg" data-src="holder.js/100%x180" alt="100%x180"
@@ -43,6 +43,9 @@
     <div id="footer"></div>
 
     <script>
+        if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $("#theform").css("margin-top", "20%");
+        }
         var reader = null;
         $(function () {
             $("#header").load("header.html");
@@ -83,6 +86,8 @@
                                 window.location.href = '/cloudDisk/front/disk.html';
                             } else if (result['error_code'] == 4) {
                                 alert("注册失败！该用户名已被占用。");
+                            } else if (result['error_code'] == 8) {
+                                alert("用户名或密码长度过短，注册失败");
                             }
                         },
                         error: function () {

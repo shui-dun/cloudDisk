@@ -20,56 +20,65 @@
 
         <div class="jumbotron" style="margin-top: 5%;margin-bottom: 10%;margin-left: 10%;margin-right: 10%;">
             <form enctype="multipart/form-data">
-                <h2><input type="file" id="filebutton" style="width: 100%;" /></h2>
+                <!-- <img id="img-upload" src="resource/file1.png" style="height: 85%;width: 85%;margin-bottom: 30%;" /> -->
+                <img id="img-upload" src="resource/file1.png" style="height: 35%;width: 35%;margin-bottom: 5%;" />
                 <p>上传至cloudDisk</p>
                 <p><a id="upload" class="btn btn-primary btn-lg" role="button">上传</a></p>
             </form>
         </div>
     </div>
 
+    <input type="file" id="filebutton" style="display: none;" />
+
     <div id="footer"></div>
 
     <script>
-        $(function () {
-            $("#header").load("header.html");
-            $("#footer").load("footer.html");
-            $("#upload").click(function () {
-                var files = $('#filebutton').prop('files');
-                var reader = new FileReader();
-                if (files.length == 0) {
-                    alert("请先上传文件");
-                } else {
-                    $('#myModal').modal('show');
-                    reader.readAsDataURL(files[0]);
-                    reader.onload = function (e) {
-                        var data = new FormData();
-                        data.append('name', files[0].name);
-                        data.append('content', reader.result);
-                        $.ajax({
-                            type: 'POST',
-                            dataType: "json",
-                            url: "/cloudDisk/upload",
-                            data: data,
-                            cache: false,
-                            processData: false,
-                            contentType: false,
-                            success: function (result) {
-                                $('#myModal').modal('hide');
-                                if (result['error_code'] == 0) {
-                                    console.log("...");
-                                    alert("上传成功");
-                                } else if (result['error_code'] == 7) {
-                                    alert("服务器IO异常");
-                                }
-                            },
-                            error: function () {
-                                alert("尚未登录");
-                                window.location.href = '/cloudDisk/front/login.html';
+        if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $("#img-upload").css({ "height": "85%", "width": "85%", "margin-bottom": "30%" });
+        }
+        $("#filebutton").change(function () {
+            $("#img-upload").attr("src", "resource/file2.png");
+        });
+        $("#img-upload").click(function () {
+            $("#filebutton").click();
+        });
+        $("#header").load("header.html");
+        $("#footer").load("footer.html");
+        $("#upload").click(function () {
+            var files = $('#filebutton').prop('files');
+            var reader = new FileReader();
+            if (files.length == 0) {
+                alert("请先上传文件");
+            } else {
+                $('#myModal').modal('show');
+                reader.readAsDataURL(files[0]);
+                reader.onload = function (e) {
+                    var data = new FormData();
+                    data.append('name', files[0].name);
+                    data.append('content', reader.result);
+                    $.ajax({
+                        type: 'POST',
+                        dataType: "json",
+                        url: "/cloudDisk/upload",
+                        data: data,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function (result) {
+                            $('#myModal').modal('hide');
+                            if (result['error_code'] == 0) {
+                                alert("上传成功");
+                            } else if (result['error_code'] == 7) {
+                                alert("服务器IO异常");
                             }
-                        });
-                    };
-                }
-            });
+                        },
+                        error: function () {
+                            alert("尚未登录");
+                            window.location.href = '/cloudDisk/front/login.html';
+                        }
+                    });
+                };
+            }
         });
     </script>
 </body>

@@ -14,8 +14,8 @@ import java.util.Date;
 @WebServlet("/list")
 public class List extends HttpServlet {
 
-    public static final String path = "D:\\file\\code\\PROJECTS\\cloudDisk\\folder\\";
-//    public static final String path = "/srv/www/folder/";
+//    public static final String path = "D:\\file\\code\\PROJECTS\\cloudDisk\\folder\\";
+    public static final String path = "/srv/www/folder/";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
