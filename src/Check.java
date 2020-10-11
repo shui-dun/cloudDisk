@@ -24,7 +24,7 @@ public class Check implements Filter {
             HttpSession session = ((HttpServletRequest) servletRequest).getSession(true);
             if (session.getAttribute("name") == null) {
                 ((HttpServletResponse) servletResponse).setStatus(403);
-                servletResponse.getWriter().write("not login");
+                servletResponse.getWriter().write(RespCode.resp(RespCode.NOT_LOGIN));
             } else {
                 filterChain.doFilter(servletRequest, servletResponse);
             }

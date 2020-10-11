@@ -36,27 +36,39 @@
             $("#upload").click(function () {
                 var files = $('#filebutton').prop('files');
                 var reader = new FileReader();
-                reader.readAsDataURL(files[0]);
-                reader.onload = function (e) {
-                    var data = new FormData();
-                    data.append('name', files[0].name);
-                    data.append('content', reader.result);
-                    $.ajax({
-                        type: 'POST',
-                        url: "/cloudDisk/upload",
-                        data: data,
-                        cache: false,
-                        processData: false,
-                        contentType: false,
-                        success: function (ret) {
-                            alert(ret);
-                        },
-                        error: function () {
-                            alert("尚未登录");
-                            window.location.href = '/cloudDisk/front/login.html';
-                        }
-                    });
-                };
+                if (files.length == 0) {
+                    alert("请先上传文件");
+                } else {
+                    $('#myModal').modal('show');
+                    reader.readAsDataURL(files[0]);
+                    reader.onload = function (e) {
+                        var data = new FormData();
+                        data.append('name', files[0].name);
+                        data.append('content', reader.result);
+                        $.ajax({
+                            type: 'POST',
+                            dataType: "json",
+                            url: "/cloudDisk/upload",
+                            data: data,
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            success: function (result) {
+                                $('#myModal').modal('hide');
+                                if (result['error_code'] == 0) {
+                                    console.log("...");
+                                    alert("上传成功");
+                                } else if (result['error_code'] == 7) {
+                                    alert("服务器IO异常");
+                                }
+                            },
+                            error: function () {
+                                alert("尚未登录");
+                                window.location.href = '/cloudDisk/front/login.html';
+                            }
+                        });
+                    };
+                }
             });
         });
     </script>

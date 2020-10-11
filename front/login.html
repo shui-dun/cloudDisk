@@ -39,6 +39,9 @@
         $(function () {
             $("#header").load("header.html");
             $("#footer").load("footer.html");
+            if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+                $("#footer").css("margin-top", "100%");
+            }
         });
 
         $("#login-button").click(function () {
@@ -49,8 +52,7 @@
                 data: $('#login-form').serializeArray(),
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 success: function (result) {
-                    if (result['status'] == 'success') {
-                        alert("登录成功！");
+                    if (result['error_code'] == 0) {
                         window.location.href = '/cloudDisk/front/disk.html';
                     } else {
                         alert("登录失败！请检查您的用户名或密码是否有误。");

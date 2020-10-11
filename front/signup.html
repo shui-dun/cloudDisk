@@ -43,7 +43,6 @@
     <div id="footer"></div>
 
     <script>
-        var ready = false;
         var reader = null;
         $(function () {
             $("#header").load("header.html");
@@ -52,17 +51,18 @@
                 $("#input-img").click();
             });
             $("#input-img").change(function () {
-                ready = false;
                 var files = $('#input-img').prop('files');
                 reader = new FileReader();
                 reader.readAsDataURL(files[0]);
                 reader.onload = function (e) {
-                    ready = true;
                     $("#theimg").attr("src", reader.result);
                 };
             });
             $("#signup-button").click(function () {
-                if (ready == true) {
+                if (reader == null) {
+                    alert("请上传照片");
+                } else {
+                    $('#myModal').modal('show');
                     var data = new FormData();
                     var array = $('#theform').serializeArray();
                     $.each(array, function () {
@@ -78,19 +78,17 @@
                         processData: false,
                         contentType: false,
                         success: function (result) {
-                            if (result['status'] == 'success') {
-                                alert("注册成功！");
+                            $('#myModal').modal('hide');
+                            if (result['error_code'] == 0) {
                                 window.location.href = '/cloudDisk/front/disk.html';
-                            } else {
+                            } else if (result['error_code'] == 4) {
                                 alert("注册失败！该用户名已被占用。");
                             }
                         },
                         error: function () {
-                            alert("未知的异常，请稍后重试。");
+                            alert("异常，请稍后重试。");
                         }
                     });
-                } else {
-                    alert("图片尚未加载完成，请耐心等待");
                 }
             });
         });

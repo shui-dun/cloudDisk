@@ -50,12 +50,17 @@
                 url: "/cloudDisk/list",
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 success: function (result) {
-                    for (var i in result) {
-                        $("#table-files").append('<tbody><tr><td><a href="/cloudDisk/download?name=' + result[i]['name'] + '">' + result[i]['name'] + '</a></td><td>' + result[i]['size'] + '</td><td>' + result[i]['time'] + '</td></tr></tbody>');
+                    if (result['error_code'] == 0) {
+                        for (var i in result['contents']) {
+                            $("#table-files").append('<tbody><tr><td><a href="/cloudDisk/download?name=' + result['contents'][i]['name'] + '">' + result['contents'][i]['name'] + '</a></td><td>' + result['contents'][i]['size'] + '</td><td>' + result['contents'][i]['time'] + '</td></tr></tbody>');
+                        }
+                    } else if (result['error_code'] == 7) {
+                        alert("服务器IO异常，请稍后再试");
                     }
+
                 },
                 error: function () {
-                    alert("尚未登录！");
+                    alert("异常！请检查你是否登录或请稍后再试！");
                     window.location.href = '/cloudDisk/front/login.html';
                 }
             });

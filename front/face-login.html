@@ -39,7 +39,6 @@
     <div id="footer"></div>
 
     <script>
-        var ready = false;
         var reader = null;
         $(function () {
             $("#header").load("header.html");
@@ -48,17 +47,18 @@
                 $("#input-img").click();
             });
             $("#input-img").change(function () {
-                ready = false;
                 var files = $('#input-img').prop('files');
                 reader = new FileReader();
                 reader.readAsDataURL(files[0]);
                 reader.onload = function (e) {
-                    ready = true;
                     $("#theimg").attr("src", reader.result);
                 };
             });
             $("#signup-button").click(function () {
-                if (ready == true) {
+                if (reader == null) {
+                    alert("请先上传照片");
+                } else {
+                    $('#myModal').modal('show');
                     var data = new FormData();
                     var array = $('#theform').serializeArray();
                     $.each(array, function () {
@@ -74,21 +74,25 @@
                         processData: false,
                         contentType: false,
                         success: function (result) {
-                            if (result['status'] == 'success') {
-                                alert("登录成功！");
+                            $('#myModal').modal('hide');
+                            if (result['error_code'] == 0) {
                                 window.location.href = '/cloudDisk/front/disk.html';
-                            } else {
-                                alert("登录失败，人脸验证失败或与用户名不匹配");
+                            } else if (result['error_code'] == 4) {
+                                alert("登录失败，用户名不存在");
+                            } else if (result['error_code'] == 5) {
+                                alert("百度服务器发生异常，请稍后再试");
+                            } else if (result['error_code'] == 6) {
+                                alert("用户名与人脸不匹配，登录失败");
                             }
                         },
                         error: function () {
-                            alert("未知的异常，请稍后重试。");
+                            alert("异常，请稍后重试！");
                         }
                     });
-                } else {
-                    alert("图片尚未加载完成，请耐心等待");
                 }
             });
+
+
         });
     </script>
 </body>

@@ -12,9 +12,9 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean success = Dao.exists("select name from user where name='" + req.getParameter("name") + "' and passwd='" + req.getParameter("passwd") + "';");
         if (!success) {
-            resp.getWriter().write("{\"status\":\"fail\"}");
+            resp.getWriter().write(RespCode.resp(RespCode.NOT_MATCH));
         } else {
-            resp.getWriter().write("{\"status\":\"success\"}");
+            resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
             HttpSession session = req.getSession(true);
             session.setAttribute("name", req.getParameter("name"));
         }

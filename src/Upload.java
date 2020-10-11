@@ -20,21 +20,26 @@ public class Upload extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
-        java.util.List<FileItem> items = readForm(req, resp, 2);
+        java.util.List<FileItem> items = readForm(req);
         if (items == null) {
+            resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
+            return;
+        }
+        if (items.size() != 2) {
+            resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
             return;
         }
         String base64 = items.get(1).getString();
         try {
             Files.write(Paths.get(List.path + items.get(0).getString()),
                     Base64.getDecoder().decode(base64RmHead(base64)));
-            resp.getWriter().write("上传成功！");
+            resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
         } catch (IOException e) {
-            resp.getWriter().write("上传失败！");
+            resp.getWriter().write(RespCode.resp(RespCode.IO_EXCEPTION));
         }
     }
 
-    public static java.util.List<FileItem> readForm(HttpServletRequest req, HttpServletResponse resp, int n) throws IOException {
+    public static java.util.List<FileItem> readForm(HttpServletRequest req) {
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setHeaderEncoding("UTF-8");
@@ -42,11 +47,6 @@ public class Upload extends HttpServlet {
         try {
             items = upload.parseRequest(req);
         } catch (FileUploadException e) {
-            resp.getWriter().write("无法解析的请求");
-            return null;
-        }
-        if (items == null || items.size() != n) {
-            resp.getWriter().write("请求的参数个数不对");
             return null;
         }
         return items;
