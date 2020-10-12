@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class Upload extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
+        resp.setContentType("application/json;charset=UTF-8");
         java.util.List<FileItem> items = readForm(req);
         if (items == null) {
             resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
@@ -29,9 +30,11 @@ public class Upload extends HttpServlet {
             resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
             return;
         }
+        String origin = items.get(0).getString();
+        String name = new String(origin.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         String base64 = items.get(1).getString();
         try {
-            Files.write(Paths.get(List.path + items.get(0).getString()),
+            Files.write(Paths.get(List.path + name),
                     Base64.getDecoder().decode(base64RmHead(base64)));
             resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
         } catch (IOException e) {

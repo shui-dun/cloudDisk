@@ -39,10 +39,10 @@
         if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
             $("#login-form").css("margin-top", "30%");
         }
-        $(function () {
-            $("#header").load("header.html");
+        $("#header").load("header.html");
+        if (!(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))) {
             $("#footer").load("footer.html");
-        });
+        }
 
         $("#login-button").click(function () {
             $.ajax({

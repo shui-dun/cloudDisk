@@ -39,6 +39,7 @@ public class FaceLogin extends HttpServlet {
         String base64 = Upload.base64RmHead(origin);
         list.add(new ImgBean(base64, "BASE64", "LIVE", "NONE", "NONE"));
         String ans = FaceMatch.faceMatch(list);
+        System.out.println(ans);
         if (ans == null || new JSONObject(ans).getInt("error_code") != 0) {
             resp.getWriter().write(RespCode.resp(RespCode.BAIDU_ERROR));
             return;

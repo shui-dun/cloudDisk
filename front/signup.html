@@ -9,6 +9,7 @@
     <link href="a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="js/compress.js"></script>
 </head>
 
 <body background="resource/bg.jpg">
@@ -21,7 +22,8 @@
         <form id="theform" class="my-form">
             <div class="input-group input-group-lg">
                 <span class="input-group-addon">用户名</span>
-                <input type="text" name="name" class="form-control" placeholder="用户名长度至少为两个字符">
+                <input onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" type="text" name="name" class="form-control"
+                    placeholder="长度>=2字母数字组合">
             </div>
             <div class="input-group input-group-lg">
                 <span class="input-group-addon">密码</span>
@@ -47,31 +49,33 @@
             $("#theform").css("margin-top", "20%");
         }
         var reader = null;
-        $(function () {
-            $("#header").load("header.html");
+        $("#header").load("header.html");
+        if (!(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))) {
             $("#footer").load("footer.html");
-            $("#thumb").click(function () {
-                $("#input-img").click();
-            });
-            $("#input-img").change(function () {
-                var files = $('#input-img').prop('files');
-                reader = new FileReader();
-                reader.readAsDataURL(files[0]);
-                reader.onload = function (e) {
-                    $("#theimg").attr("src", reader.result);
-                };
-            });
-            $("#signup-button").click(function () {
-                if (reader == null) {
-                    alert("请上传照片");
-                } else {
-                    $('#myModal').modal('show');
-                    var data = new FormData();
-                    var array = $('#theform').serializeArray();
-                    $.each(array, function () {
-                        data.append(this.name, this.value);
-                    });
-                    data.append('content', reader.result);
+        }
+        $("#thumb").click(function () {
+            $("#input-img").click();
+        });
+        $("#input-img").change(function () {
+            var files = $('#input-img').prop('files');
+            reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+            reader.onload = function (e) {
+                $("#theimg").attr("src", reader.result);
+            };
+        });
+        $("#signup-button").click(function () {
+            if (reader == null) {
+                alert("请上传照片");
+            } else {
+                $('#myModal').modal('show');
+                var data = new FormData();
+                var array = $('#theform').serializeArray();
+                $.each(array, function () {
+                    data.append(this.name, this.value);
+                });
+                compress(reader.result, 800, 0.5).then(function (val) {
+                    data.append('content', val);
                     $.ajax({
                         type: 'POST',
                         url: "/cloudDisk/signup",
@@ -94,8 +98,8 @@
                             alert("异常，请稍后重试。");
                         }
                     });
-                }
-            });
+                });
+            }
         });
     </script>
 </body>

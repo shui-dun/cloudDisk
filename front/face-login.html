@@ -9,6 +9,7 @@
     <link href="a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="js/compress.js"></script>
 </head>
 
 <body background="resource/bg.jpg">
@@ -43,31 +44,34 @@
             $("#theform").css("margin-top", "30%");
         }
         var reader = null;
-        $(function () {
-            $("#header").load("header.html");
+        $("#header").load("header.html");
+        if (!(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))) {
             $("#footer").load("footer.html");
-            $("#thumb").click(function () {
-                $("#input-img").click();
-            });
-            $("#input-img").change(function () {
-                var files = $('#input-img').prop('files');
-                reader = new FileReader();
-                reader.readAsDataURL(files[0]);
-                reader.onload = function (e) {
-                    $("#theimg").attr("src", reader.result);
-                };
-            });
-            $("#signup-button").click(function () {
-                if (reader == null) {
-                    alert("请先上传照片");
-                } else {
-                    $('#myModal').modal('show');
-                    var data = new FormData();
-                    var array = $('#theform').serializeArray();
-                    $.each(array, function () {
-                        data.append(this.name, this.value);
-                    });
-                    data.append('content', reader.result);
+        }
+        $("#thumb").click(function () {
+            $("#input-img").click();
+        });
+        $("#input-img").change(function () {
+            var files = $('#input-img').prop('files');
+            reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+            reader.onload = function (e) {
+                $("#theimg").attr("src", reader.result);
+            };
+        });
+        $("#signup-button").click(function () {
+            if (reader == null) {
+                alert("请先上传照片");
+            } else {
+                $('#myModal').modal('show');
+                var data = new FormData();
+                var array = $('#theform').serializeArray();
+                $.each(array, function () {
+                    data.append(this.name, this.value);
+                });
+                compress(reader.result, 800, 0.5).then(function (val) {
+                    console.log(val);
+                    data.append('content', val);
                     $.ajax({
                         type: 'POST',
                         url: "/cloudDisk/facelogin",
@@ -83,7 +87,7 @@
                             } else if (result['error_code'] == 4) {
                                 alert("登录失败，用户名不存在");
                             } else if (result['error_code'] == 5) {
-                                alert("百度服务器发生异常，请稍后再试");
+                                alert("百度服务器发生异常，可能是未检测到人脸");
                             } else if (result['error_code'] == 6) {
                                 alert("用户名与人脸不匹配，登录失败");
                             }
@@ -92,10 +96,8 @@
                             alert("异常，请稍后重试！");
                         }
                     });
-                }
-            });
-
-
+                });
+            }
         });
     </script>
 </body>

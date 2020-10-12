@@ -21,19 +21,12 @@
     </div>
     <div class="container form-container">
         <table id="table-files" class="table table-hover">
-            <thead>
-                <tr>
-                    <th>文件名称</th>
-                    <th>大小</th>
-                    <th>更改时间</th>
-                </tr>
-            </thead>
         </table>
 
         <nav aria-label="...">
             <ul class="pager" style="text-align: right;">
-                <li><a href="#">Previous</a></li>
-                <li><a href="#">Next</a></li>
+                <li><a id="pre">Previous</a></li>
+                <li><a id="nxt">Next</a></li>
             </ul>
         </nav>
     </div>
@@ -41,29 +34,61 @@
     <div id="footer"></div>
 
     <script>
-        $(function () {
-            $("#header").load("header.html");
+        var cur_page = 0;
+        var n_per_page = 20;
+        var results = null;
+        $("#header").load("header.html");
+        if (!(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))) {
             $("#footer").load("footer.html");
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "/cloudDisk/list",
-                contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
-                success: function (result) {
-                    if (result['error_code'] == 0) {
-                        for (var i in result['contents']) {
-                            $("#table-files").append('<tbody><tr><td><a href="/cloudDisk/download?name=' + result['contents'][i]['name'] + '">' + result['contents'][i]['name'] + '</a></td><td>' + result['contents'][i]['size'] + '</td><td>' + result['contents'][i]['time'] + '</td></tr></tbody>');
-                        }
-                    } else if (result['error_code'] == 7) {
-                        alert("服务器IO异常，请稍后再试");
-                    }
+        }
 
-                },
-                error: function () {
-                    alert("异常！请检查你是否登录或请稍后再试！");
-                    window.location.href = '/cloudDisk/front/login.html';
+        function update_page() {
+            var beg = cur_page * n_per_page;
+            var end = (cur_page + 1) * n_per_page;
+            if (results.length < end) {
+                end = results.length;
+            }
+            $("#table-files").empty();
+            $("#table-files").append('<thead><tr><th>文件名称</th><th>大小</th><th>更改时间</th></tr></thead>');
+            for (var i = beg; i < end; i++) {
+                $("#table-files").append('<tbody><tr><td><a href="/cloudDisk/download?name=' + results[i]['name'] + '">' + results[i]['name'] + '</a></td><td>' + results[i]['size'] + '</td><td>' + results[i]['time'] + '</td></tr></tbody>');
+            }
+        }
+
+        $("#pre").click(function () {
+            if (cur_page == 0) {
+                return;
+            }
+            cur_page--;
+            update_page();
+        });
+
+        $("#nxt").click(function () {
+            if ((cur_page + 1) * n_per_page >= results.length) {
+                return;
+            }
+            cur_page++;
+            update_page();
+        });
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/cloudDisk/list",
+            contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+            success: function (result) {
+                if (result['error_code'] == 0) {
+                    cur_page = 0;
+                    results = result['contents'];
+                    update_page();
+                } else if (result['error_code'] == 7) {
+                    alert("服务器IO异常，请稍后再试");
                 }
-            });
+
+            },
+            error: function () {
+                alert("异常！请检查你是否登录或请稍后再试！");
+                window.location.href = '/cloudDisk/front/login.html';
+            }
         });
     </script>
 </body>

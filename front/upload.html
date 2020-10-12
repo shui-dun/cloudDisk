@@ -43,7 +43,9 @@
             $("#filebutton").click();
         });
         $("#header").load("header.html");
-        $("#footer").load("footer.html");
+        if (!(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))) {
+            $("#footer").load("footer.html");
+        }
         $("#upload").click(function () {
             var files = $('#filebutton').prop('files');
             var reader = new FileReader();
@@ -54,6 +56,7 @@
                 reader.readAsDataURL(files[0]);
                 reader.onload = function (e) {
                     var data = new FormData();
+                    data.set
                     data.append('name', files[0].name);
                     data.append('content', reader.result);
                     $.ajax({

@@ -12,7 +12,7 @@ import java.io.IOException;
 public class SignUp extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
+        resp.setContentType("application/json;charset=UTF-8");
         java.util.List<FileItem> items = Upload.readForm(req);
         if (items == null) {
             resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
