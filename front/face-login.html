@@ -69,8 +69,7 @@
                 $.each(array, function () {
                     data.append(this.name, this.value);
                 });
-                compress(reader.result, 800, 0.5).then(function (val) {
-                    console.log(val);
+                compress(reader.result, 1000, 0.8).then(function (val) {
                     data.append('content', val);
                     $.ajax({
                         type: 'POST',
@@ -87,12 +86,15 @@
                             } else if (result['error_code'] == 4) {
                                 alert("登录失败，用户名不存在");
                             } else if (result['error_code'] == 5) {
-                                alert("百度服务器发生异常，可能是未检测到人脸");
+                                alert("百度服务器发生异常，请稍后再试");
                             } else if (result['error_code'] == 6) {
                                 alert("用户名与人脸不匹配，登录失败");
+                            } else if (result['error_code'] == 9) {
+                                alert("百度服务器返回错误信息：" + result['error_msg']);
                             }
                         },
                         error: function () {
+                            $('#myModal').modal('hide');
                             alert("异常，请稍后重试！");
                         }
                     });

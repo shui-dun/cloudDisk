@@ -11,11 +11,13 @@ public class RespCode {
 
     public static int BAIDU_ERROR = 5;
 
-    public static int NOT_MATCH = 6;
+    public static int FACE_NOT_MATCH = 6;
 
     public static int IO_EXCEPTION = 7;
 
     public static int WEAK_PASSWD = 8;
+
+    public static int BAIDU_ERROR_RET = 9;
 
     public static String resp(int code) {
         return String.format("{\"error_code\":%d}", code);

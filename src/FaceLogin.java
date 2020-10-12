@@ -39,14 +39,18 @@ public class FaceLogin extends HttpServlet {
         String base64 = Upload.base64RmHead(origin);
         list.add(new ImgBean(base64, "BASE64", "LIVE", "NONE", "NONE"));
         String ans = FaceMatch.faceMatch(list);
-        System.out.println(ans);
-        if (ans == null || new JSONObject(ans).getInt("error_code") != 0) {
+        if (ans == null) {
             resp.getWriter().write(RespCode.resp(RespCode.BAIDU_ERROR));
             return;
         }
-        if (!isMatch(ans)) {
-            resp.getWriter().write(RespCode.resp(RespCode.NOT_MATCH));
+        JSONObject json = new JSONObject(ans);
+        if (json.getInt("error_code") != 0) {
+            String s = String.format("{\"error_code\":%d,\"error_msg\":\"%s\"}", RespCode.BAIDU_ERROR_RET, json.getString("error_msg"));
+            resp.getWriter().write(s);
             return;
+        }
+        if (!isMatch(ans)) {
+            resp.getWriter().write(RespCode.resp(RespCode.FACE_NOT_MATCH));
         } else {
             resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
             HttpSession session = req.getSession(true);
