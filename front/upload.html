@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>登录</title>
     <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="a.css" rel="stylesheet" />
+    <link href="css/a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </head>
@@ -69,10 +69,10 @@
                         contentType: false,
                         success: function (result) {
                             $('#myModal').modal('hide');
-                            if (result['error_code'] == 0) {
+                            if (result['code'] == 0) {
                                 alert("上传成功");
-                            } else if (result['error_code'] == 7) {
-                                alert("服务器IO异常");
+                            } else {
+                                alert(result['msg']);
                             }
                         },
                         error: function () {

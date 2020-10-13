@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>登录</title>
     <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="a.css" rel="stylesheet" />
+    <link href="css/a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </head>
@@ -52,10 +52,10 @@
                 data: $('#login-form').serializeArray(),
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 success: function (result) {
-                    if (result['error_code'] == 0) {
+                    if (result['code'] == 0) {
                         window.location.href = '/cloudDisk/front/disk.html';
                     } else {
-                        alert("登录失败！请检查您的用户名或密码是否有误。");
+                        alert(result['msg']);
                     }
                 },
                 error: function () {

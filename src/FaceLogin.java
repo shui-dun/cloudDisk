@@ -1,5 +1,6 @@
 import com.baidu.ai.aip.utils.GsonUtils;
 import com.baidu.ai.aip.utils.HttpUtil;
+import com.google.gson.Gson;
 import org.apache.commons.fileupload.FileItem;
 import org.json.JSONObject;
 
@@ -19,40 +20,38 @@ public class FaceLogin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
         java.util.List<FileItem> items = Upload.readForm(req);
         if (items == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
+            resp.getWriter().write(new RespBean(ErrorCode.UNRESOLVED_REQUEST).toJson());
             return;
         }
         if (items.size() != 2) {
-            resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.N_PARAMETER_ERROR).toJson());
             return;
         }
         List<ImgBean> list = new ArrayList<>();
         list.add(new ImgBean(Upload.base64RmHead(items.get(1).getString()), "BASE64", "LIVE", "NONE", "NONE"));
         String origin = Dao.query("select img from user where name='" + items.get(0).getString() + "';");
         if (origin == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.USER_NAME_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.USER_NAME_NOT_EXIST).toJson());
             return;
         }
         String base64 = Upload.base64RmHead(origin);
         list.add(new ImgBean(base64, "BASE64", "LIVE", "NONE", "NONE"));
         String ans = FaceMatch.faceMatch(list);
         if (ans == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.BAIDU_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.BAIDU_ERROR).toJson());
             return;
         }
         JSONObject json = new JSONObject(ans);
         if (json.getInt("error_code") != 0) {
-            String s = String.format("{\"error_code\":%d,\"error_msg\":\"%s\"}", RespCode.BAIDU_ERROR_RET, json.getString("error_msg"));
-            resp.getWriter().write(s);
+            resp.getWriter().write(new RespBean(ErrorCode.BAIDU_ERROR_RET.getCode(), ErrorCode.BAIDU_ERROR_RET.getMsg() + "：" + json.getString("error_msg")).toJson());
             return;
         }
         if (!isMatch(ans)) {
-            resp.getWriter().write(RespCode.resp(RespCode.FACE_NOT_MATCH));
+            resp.getWriter().write(new RespBean(ErrorCode.FACE_NOT_MATCH).toJson());
         } else {
-            resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
+            resp.getWriter().write(new RespBean(ErrorCode.SUCCESS).toJson());
             HttpSession session = req.getSession(true);
             session.setAttribute("name", items.get(0).getString());
         }
@@ -80,11 +79,9 @@ public class FaceLogin extends HttpServlet {
 
     private static class FaceMatch {
         public static String faceMatch(Object map) {
-            // 请求url
             String url = "https://aip.baidubce.com/rest/2.0/face/v3/match";
             try {
                 String param = GsonUtils.toJson(map);
-                // 注意这里仅为了简化编码每一次请求都去获取access_token，线上环境access_token有过期时间， 客户端可自行缓存，过期后重新获取。
                 String accessToken = AuthService.getAuth();
                 return HttpUtil.post(url, accessToken, "application/json", param);
             } catch (Exception e) {

@@ -14,34 +14,43 @@ import java.util.Date;
 @WebServlet("/list")
 public class List extends HttpServlet {
 
-    public static final String path = "D:\\file\\code\\PROJECTS\\cloudDisk\\folder\\";
+        public static final String path = "D:\\file\\code\\PROJECTS\\cloudDisk\\folder\\";
 //    public static final String path = "/srv/www/folder/";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=UTF-8");
         File folder = new File(path);
         File[] files = folder.listFiles();
         if (files == null) {
-            resp.getWriter().write(new Gson().toJson(new RespBean(RespCode.IO_EXCEPTION)));
+            resp.getWriter().write(new ListRespBean(ErrorCode.IO_EXCEPTION).toJson());
         } else {
-            RespBean bean = new RespBean(RespCode.SUCCESS);
+            ListRespBean bean = new ListRespBean(ErrorCode.SUCCESS);
             if (files.length != 0) {
                 SimpleDateFormat ft = new SimpleDateFormat("yy-MM-dd hh:mm");
                 for (File file : files) {
                     if (file.isFile()) {
-                        bean.add(new RespBean.ContentBean(file.getName(), file.length(), ft.format(new Date(file.lastModified()))));
+                        bean.add(new ListRespBean.ContentBean(file.getName(), file.length(), ft.format(new Date(file.lastModified()))));
                     }
                 }
             }
-            resp.getWriter().write(new Gson().toJson(bean));
+            resp.getWriter().write(bean.toJson());
         }
     }
 
-    private static class RespBean {
-        private int error_code;
-
+    private static class ListRespBean extends RespBean {
         private java.util.List<ContentBean> contents = new ArrayList<>();
+
+        public ListRespBean(Integer code, String msg) {
+            super(code, msg);
+        }
+
+        public ListRespBean(ErrorCode errorCode) {
+            super(errorCode);
+        }
+
+        void add(ContentBean contentBean) {
+            contents.add(contentBean);
+        }
 
         private static class ContentBean {
             private String name;
@@ -55,12 +64,5 @@ public class List extends HttpServlet {
             }
         }
 
-        public RespBean(int error_code) {
-            this.error_code = error_code;
-        }
-
-        public void add(ContentBean contentBean) {
-            contents.add(contentBean);
-        }
     }
 }

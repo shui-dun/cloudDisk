@@ -17,43 +17,45 @@ import java.util.Map;
 public class SignUp extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=UTF-8");
         java.util.List<FileItem> items = Upload.readForm(req);
         if (items == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
+            resp.getWriter().write(new RespBean(ErrorCode.UNRESOLVED_REQUEST).toJson());
             return;
         }
         if (items.size() != 3) {
-            resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.N_PARAMETER_ERROR).toJson());
             return;
         }
         String name = items.get(0).getString();
         String passwd = items.get(1).getString();
         String base64 = items.get(2).getString();
-        if (name.length() <= 1 || passwd.length() <= 3) {
-            resp.getWriter().write(RespCode.resp(RespCode.WEAK_PASSWD));
+        if (name.length() <= 1) {
+            resp.getWriter().write(new RespBean(ErrorCode.WEAK_USER_NAME).toJson());
+            return;
+        }
+        if (passwd.length() <= 3) {
+            resp.getWriter().write(new RespBean(ErrorCode.WEAK_PASSWD).toJson());
             return;
         }
         if (Dao.exists("select name from user where name=\"" + name + "\";")) {
-            resp.getWriter().write(RespCode.resp(RespCode.USER_NAME_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.USER_NAME_OCCUPIED).toJson());
             return;
         }
         String ans = FaceDetect.faceDetect(Upload.base64RmHead(base64));
         if (ans == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.BAIDU_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.BAIDU_ERROR).toJson());
             return;
         }
         JSONObject json = new JSONObject(ans);
         if (json.getInt("error_code") != 0) {
-            String s = String.format("{\"error_code\":%d,\"error_msg\":\"%s\"}", RespCode.BAIDU_ERROR_RET, json.getString("error_msg"));
-            resp.getWriter().write(s);
+            resp.getWriter().write(new RespBean(ErrorCode.BAIDU_ERROR_RET.getCode(), ErrorCode.BAIDU_ERROR_RET.getMsg() + "：" + json.getString("error_msg")).toJson());
             return;
         }
         boolean success = Dao.update("insert into user values('" + name + "','" + passwd + "','" + base64 + "');");
         if (!success) {
-            resp.getWriter().write(RespCode.resp(RespCode.IO_EXCEPTION));
+            resp.getWriter().write(new RespBean(ErrorCode.IO_EXCEPTION).toJson());
         } else {
-            resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
+            resp.getWriter().write(new RespBean(ErrorCode.SUCCESS).toJson());
             HttpSession session = req.getSession(true);
             session.setAttribute("name", items.get(0));
         }
@@ -62,7 +64,6 @@ public class SignUp extends HttpServlet {
     private static class FaceDetect {
 
         public static String faceDetect(String base64) {
-            // 请求url
             String url = "https://aip.baidubce.com/rest/2.0/face/v3/detect";
             try {
                 Map<String, Object> map = new HashMap<>();
@@ -70,7 +71,6 @@ public class SignUp extends HttpServlet {
                 map.put("image_type", "BASE64");
                 map.put("face_type", "LIVE");
                 String param = GsonUtils.toJson(map);
-                System.out.println(param);
                 String accessToken = AuthService.getAuth();
                 String result = HttpUtil.post(url, accessToken, "application/json", param);
                 return result;

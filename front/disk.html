@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>网盘内容</title>
     <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="a.css" rel="stylesheet" />
+    <link href="css/a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </head>
@@ -76,12 +76,12 @@
             url: "/cloudDisk/list",
             contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
             success: function (result) {
-                if (result['error_code'] == 0) {
+                if (result['code'] == 0) {
                     cur_page = 0;
                     results = result['contents'];
                     update_page();
-                } else if (result['error_code'] == 7) {
-                    alert("服务器IO异常，请稍后再试");
+                } else{
+                    alert(result['msg']);
                 }
 
             },

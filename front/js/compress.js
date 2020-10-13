@@ -2,7 +2,6 @@ function compress(base64String, w, quality) {
     var getMimeType = function (urlData) {
         var arr = urlData.split(',');
         var mime = arr[0].match(/:(.*?);/)[1];
-        // return mime.replace("image/", "");
         return mime;
     };
     var newImage = new Image();

@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 public class Download extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding("utf-8");
         String name = req.getParameter("name");
         resp.addHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(name, StandardCharsets.UTF_8) + "\"");
         File file = new File(List.path + name);

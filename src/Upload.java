@@ -20,14 +20,13 @@ import java.util.Map;
 public class Upload extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=UTF-8");
         java.util.List<FileItem> items = readForm(req);
         if (items == null) {
-            resp.getWriter().write(RespCode.resp(RespCode.UNRESOLVED_REQUEST));
+            resp.getWriter().write(new RespBean(ErrorCode.UNRESOLVED_REQUEST).toJson());
             return;
         }
         if (items.size() != 2) {
-            resp.getWriter().write(RespCode.resp(RespCode.N_PARAMETER_ERROR));
+            resp.getWriter().write(new RespBean(ErrorCode.N_PARAMETER_ERROR).toJson());
             return;
         }
         String origin = items.get(0).getString();
@@ -36,9 +35,9 @@ public class Upload extends HttpServlet {
         try {
             Files.write(Paths.get(List.path + name),
                     Base64.getDecoder().decode(base64RmHead(base64)));
-            resp.getWriter().write(RespCode.resp(RespCode.SUCCESS));
+            resp.getWriter().write(new RespBean(ErrorCode.SUCCESS).toJson());
         } catch (IOException e) {
-            resp.getWriter().write(RespCode.resp(RespCode.IO_EXCEPTION));
+            resp.getWriter().write(new RespBean(ErrorCode.IO_EXCEPTION).toJson());
         }
     }
 

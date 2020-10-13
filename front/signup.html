@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>注册</title>
     <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="a.css" rel="stylesheet" />
+    <link href="css/a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="js/compress.js"></script>
@@ -86,16 +86,10 @@
                         contentType: false,
                         success: function (result) {
                             $('#myModal').modal('hide');
-                            if (result['error_code'] == 0) {
+                            if (result['code'] == 0) {
                                 window.location.href = '/cloudDisk/front/disk.html';
-                            } else if (result['error_code'] == 4) {
-                                alert("注册失败！该用户名已被占用。");
-                            } else if (result['error_code'] == 8) {
-                                alert("用户名或密码长度过短，注册失败");
-                            } else if (result['error_code'] == 5) {
-                                alert("百度服务器异常，请稍后再试");
-                            } else if (result['error_code'] == 9) {
-                                alert("百度服务器返回错误信息：" + result['error_msg']);
+                            } else {
+                                alert(result['msg']);
                             } 
                         },
                         error: function () {
