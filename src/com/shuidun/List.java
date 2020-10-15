@@ -1,4 +1,4 @@
-import com.google.gson.Gson;
+package com.shuidun;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,15 +11,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * 展示网盘中的文件内容
+ * <p>
+ * 响应：
+ * code:状态码
+ * msg:状态信息
+ * contents:文件信息，详见ListRespBean
+ */
 @WebServlet("/list")
 public class List extends HttpServlet {
 
-        public static final String path = "D:\\file\\code\\PROJECTS\\cloudDisk\\folder\\";
-//    public static final String path = "/srv/www/folder/";
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        File folder = new File(path);
+        File folder = new File(Property.getFolderPath());
         File[] files = folder.listFiles();
         if (files == null) {
             resp.getWriter().write(new ListRespBean(ErrorCode.IO_EXCEPTION).toJson());
@@ -37,7 +42,13 @@ public class List extends HttpServlet {
         }
     }
 
+    /**
+     * 文件列表信息的JavaBean
+     */
     private static class ListRespBean extends RespBean {
+        /**
+         * 文件信息列表
+         */
         private java.util.List<ContentBean> contents = new ArrayList<>();
 
         public ListRespBean(Integer code, String msg) {
@@ -48,13 +59,30 @@ public class List extends HttpServlet {
             super(errorCode);
         }
 
+        /**
+         * 向文件中添加一个文件
+         */
         void add(ContentBean contentBean) {
             contents.add(contentBean);
         }
 
+        /**
+         * 文件的JavaBean
+         */
         private static class ContentBean {
+            /**
+             * 文件名称
+             */
             private String name;
+
+            /**
+             * 文件大小
+             */
             private Long size;
+
+            /**
+             * 文件上次修改时间
+             */
             private String time;
 
             public ContentBean(String name, Long size, String time) {

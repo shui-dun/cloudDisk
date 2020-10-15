@@ -1,8 +1,19 @@
+package com.shuidun;
+
 import com.google.gson.Gson;
 
+/**
+ * JavaBean，转化为json字符串作为响应体
+ */
 public class RespBean {
+    /**
+     * 错误码
+     */
     private Integer code;
 
+    /**
+     * 错误信息
+     */
     private String msg;
 
     public RespBean(Integer code, String msg) {
@@ -23,6 +34,9 @@ public class RespBean {
         return msg;
     }
 
+    /**
+     * 转化为json字符串
+     */
     public String toJson() {
         return new Gson().toJson(this);
     }

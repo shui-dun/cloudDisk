@@ -1,14 +1,16 @@
-import com.google.gson.Gson;
+package com.shuidun;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * 过滤器，检测是否登录，未登录则拦截，否则通过
+ */
 @WebFilter("/*")
 public class Check implements Filter {
     private static ArrayList<String> exclude = new ArrayList<>();
@@ -25,7 +27,6 @@ public class Check implements Filter {
         } else {
             HttpSession session = ((HttpServletRequest) servletRequest).getSession(true);
             if (session.getAttribute("name") == null) {
-                ((HttpServletResponse) servletResponse).setStatus(403);
                 servletResponse.getWriter().write(new RespBean(ErrorCode.NOT_LOGIN).toJson());
             } else {
                 filterChain.doFilter(servletRequest, servletResponse);

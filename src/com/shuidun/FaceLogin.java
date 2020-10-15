@@ -1,6 +1,7 @@
+package com.shuidun;
+
 import com.baidu.ai.aip.utils.GsonUtils;
 import com.baidu.ai.aip.utils.HttpUtil;
-import com.google.gson.Gson;
 import org.apache.commons.fileupload.FileItem;
 import org.json.JSONObject;
 
@@ -14,6 +15,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * 人脸登录验证
+ * <p>
+ * 请求：
+ * name:用户名
+ * content:人脸照片的base64码
+ * <p>
+ * 响应：
+ * code:状态码
+ * msg:状态信息
+ */
 @WebServlet("/facelogin")
 public class FaceLogin extends HttpServlet {
 
@@ -31,7 +44,7 @@ public class FaceLogin extends HttpServlet {
         }
         List<ImgBean> list = new ArrayList<>();
         list.add(new ImgBean(Upload.base64RmHead(items.get(1).getString()), "BASE64", "LIVE", "NONE", "NONE"));
-        String origin = Dao.query("select img from user where name='" + items.get(0).getString() + "';");
+        String origin = Dao.imgBase64(items.get(0).getString());
         if (origin == null) {
             resp.getWriter().write(new RespBean(ErrorCode.USER_NAME_NOT_EXIST).toJson());
             return;

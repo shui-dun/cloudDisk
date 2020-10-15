@@ -1,4 +1,4 @@
-import com.google.gson.Gson;
+package com.shuidun;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,11 +8,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * 进行登录验证
+ * <p>
+ * 请求
+ * name:用户名
+ * passwd:秘密
+ * <p>
+ * 响应：
+ * code:状态码
+ * msg:状态信息
+ */
 @WebServlet("/login")
 public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        boolean success = Dao.exists("select name from user where name='" + req.getParameter("name") + "' and passwd='" + req.getParameter("passwd") + "';");
+        boolean success = Dao.testPasswd(req.getParameter("name"), req.getParameter("passwd"));
         if (!success) {
             resp.getWriter().write(new RespBean(ErrorCode.USERNAME_PASSWD_NOT_MATCH).toJson());
         } else {

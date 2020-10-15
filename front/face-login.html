@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>登录</title>
-    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/a.css" rel="stylesheet" />
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="js/compress.js"></script>
 </head>
 
@@ -82,14 +82,14 @@
                         success: function (result) {
                             $('#myModal').modal('hide');
                             if (result['code'] == 0) {
-                                window.location.href = '/cloudDisk/front/disk.html';
-                            } else  {
+                                window.location.href = 'disk.html';
+                            } else {
                                 alert(result['msg']);
-                            } 
+                            }
                         },
                         error: function () {
                             $('#myModal').modal('hide');
-                            alert("异常，请稍后重试！");
+                            alert("服务器发生异常");
                         }
                     });
                 });

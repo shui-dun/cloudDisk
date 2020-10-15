@@ -1,3 +1,5 @@
+package com.shuidun;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -13,9 +15,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * 向网盘中上传文件
+ * <p>
+ * 请求
+ * name:文件名
+ * content:文件内容的base64码
+ * <p>
+ * 响应
+ * code:状态码
+ * msg:状态信息
+ */
 @WebServlet("/upload")
 public class Upload extends HttpServlet {
     @Override
@@ -32,9 +43,13 @@ public class Upload extends HttpServlet {
         String origin = items.get(0).getString();
         String name = new String(origin.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         String base64 = items.get(1).getString();
+        if (base64.equals("data:")) {
+            resp.getWriter().write(new RespBean(ErrorCode.EMPTY_FILE).toJson());
+            return;
+        }
+        byte[] bytes = Base64.getDecoder().decode(base64RmHead(base64));
         try {
-            Files.write(Paths.get(List.path + name),
-                    Base64.getDecoder().decode(base64RmHead(base64)));
+            Files.write(Paths.get(Property.getFolderPath() + name), bytes);
             resp.getWriter().write(new RespBean(ErrorCode.SUCCESS).toJson());
         } catch (IOException e) {
             resp.getWriter().write(new RespBean(ErrorCode.IO_EXCEPTION).toJson());

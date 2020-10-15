@@ -1,3 +1,5 @@
+package com.shuidun;
+
 import com.baidu.ai.aip.utils.GsonUtils;
 import com.baidu.ai.aip.utils.HttpUtil;
 import org.apache.commons.fileupload.FileItem;
@@ -13,6 +15,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 注册账号
+ * <p>
+ * 请求：
+ * name:用户名
+ * passwd:密码明文
+ * content:人脸照片的base64码
+ * <p>
+ * 响应：
+ * code:状态码
+ * msg:状态信息
+ */
 @WebServlet("/signup")
 public class SignUp extends HttpServlet {
     @Override
@@ -37,7 +51,7 @@ public class SignUp extends HttpServlet {
             resp.getWriter().write(new RespBean(ErrorCode.WEAK_PASSWD).toJson());
             return;
         }
-        if (Dao.exists("select name from user where name=\"" + name + "\";")) {
+        if (Dao.existsUser(name)) {
             resp.getWriter().write(new RespBean(ErrorCode.USER_NAME_OCCUPIED).toJson());
             return;
         }
@@ -51,9 +65,9 @@ public class SignUp extends HttpServlet {
             resp.getWriter().write(new RespBean(ErrorCode.BAIDU_ERROR_RET.getCode(), ErrorCode.BAIDU_ERROR_RET.getMsg() + "：" + json.getString("error_msg")).toJson());
             return;
         }
-        boolean success = Dao.update("insert into user values('" + name + "','" + passwd + "','" + base64 + "');");
+        boolean success = Dao.addUser(name, passwd, base64);
         if (!success) {
-            resp.getWriter().write(new RespBean(ErrorCode.IO_EXCEPTION).toJson());
+            resp.getWriter().write(new RespBean(ErrorCode.DB_ERROR).toJson());
         } else {
             resp.getWriter().write(new RespBean(ErrorCode.SUCCESS).toJson());
             HttpSession session = req.getSession(true);
