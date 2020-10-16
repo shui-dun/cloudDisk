@@ -13,7 +13,7 @@ import java.io.IOException;
  * <p>
  * 请求
  * name:用户名
- * passwd:秘密
+ * passwd:密码明文
  * <p>
  * 响应：
  * code:状态码

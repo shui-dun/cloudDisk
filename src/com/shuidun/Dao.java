@@ -19,7 +19,9 @@ import java.util.Random;
 public class Dao {
 
     /**
-     * 获取数据库连接Connection对象
+     * 从数据库连接池中获取一个连接
+     *
+     * @return 数据库连接
      */
     private static Connection getConnection() throws NamingException, SQLException {
         Context initContext = new InitialContext();

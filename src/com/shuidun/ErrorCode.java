@@ -1,7 +1,7 @@
 package com.shuidun;
 
 /**
- * 错误代码与与之对应的错误信息
+ * 枚举类：错误代码与对应的错误信息
  */
 public enum ErrorCode {
     SUCCESS(0, "成功"),

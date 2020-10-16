@@ -17,7 +17,7 @@ import java.util.Date;
  * 响应：
  * code:状态码
  * msg:状态信息
- * contents:文件信息，详见ListRespBean
+ * contents:文件列表信息，详见ListRespBean
  */
 @WebServlet("/list")
 public class List extends HttpServlet {
@@ -60,7 +60,7 @@ public class List extends HttpServlet {
         }
 
         /**
-         * 向文件中添加一个文件
+         * 向文件列表中添加一个文件
          */
         void add(ContentBean contentBean) {
             contents.add(contentBean);

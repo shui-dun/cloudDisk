@@ -3,7 +3,7 @@ package com.shuidun;
 import com.google.gson.Gson;
 
 /**
- * JavaBean，转化为json字符串作为响应体
+ * JavaBean，用于转化为json字符串作为响应体
  */
 public class RespBean {
     /**
